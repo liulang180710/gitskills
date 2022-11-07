@@ -1,0 +1,13 @@
+org\my\springcloud\producer\dao\HumanInfoMapper.class
+org\my\springcloud\producer\service\MediaRecoverManager.class
+org\my\springcloud\producer\service\impl\CommonManagerImpl$1.class
+org\my\springcloud\producer\service\HumanInfoManager.class
+org\my\springcloud\producer\controller\HumanInfoController.class
+org\my\springcloud\producer\service\impl\HumanInfoManagerImpl.class
+org\my\springcloud\producer\service\impl\MediaRecoverManagerImpl.class
+org\my\springcloud\producer\service\CommonManager.class
+org\my\springcloud\producer\service\impl\CommonManagerImpl.class
+org\my\springcloud\producer\service\impl\ProducerServiceImpl.class
+org\my\springcloud\producer\ProducerApplication.class
+org\my\springcloud\producer\service\ProducerService.class
+org\my\springcloud\producer\controller\MessageController.class

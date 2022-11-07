@@ -1,0 +1,19 @@
+server:
+  port: 8088
+spring:
+  application:
+    name: my-zuul
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka/
+    enabled: true
+  instance:
+    prefer-ip-address: true
+zuul:
+    prefix: /api
+    routes:
+      payment:  #payment是自定义的名字，随便定义
+        serviceId: my-consumer  #真实的服务名字
+        path: /human/**  #配置访问的路径，路径中带有consumer的请求会被路由到真实的服务。
+    ignored-services: my-consumer #不能通过服务名字进行访问的服务的名字

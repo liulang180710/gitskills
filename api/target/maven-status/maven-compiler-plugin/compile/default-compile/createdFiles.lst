@@ -1,0 +1,4 @@
+org\my\springcloud\api\ApiApplication.class
+org\my\springcloud\api\service\HumanInfoRemoteClientManagerFallbackFactory$1.class
+org\my\springcloud\api\service\HumanInfoRemoteClientManagerFallbackFactory.class
+org\my\springcloud\api\service\HumanInfoRemoteClientManager.class

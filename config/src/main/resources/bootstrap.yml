@@ -1,0 +1,16 @@
+server:
+  port: 8403
+
+spring:
+  application:
+    name: nacos-config-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 114.116.106.172:8848    #注册中心地址
+        enabled: true
+      config:
+        server-addr: 114.116.106.172:8848   #配置中心地址
+        file-extension: yaml  #后缀名
+        group: DEFAULT_GROUP      #分组
+        namespace: public  #命名空间的id

@@ -1,0 +1,5 @@
+org\my\springcloud\base\bean\ListNode.class
+org\my\springcloud\base\bean\HumanInfo.class
+org\my\springcloud\base\bean\ResultInfo.class
+org\my\springcloud\base\BaseApplication.class
+org\my\springcloud\base\bean\MessaInfo.class

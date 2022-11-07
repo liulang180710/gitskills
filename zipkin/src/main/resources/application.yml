@@ -1,0 +1,10 @@
+server:
+  port: 9411
+spring:
+  application:
+    name: my-zipkin-server
+management:
+  metrics:
+    web:
+      server:
+        autoTimeRequests: false

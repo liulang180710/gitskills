@@ -1,0 +1,44 @@
+server:
+  port: 8005
+spring:
+  rabbitmq:
+    host: 114.116.106.172
+    port: 5672
+    virtual-host: /
+    username: guest
+    password: guest
+    publisher-confirm-type: correlated
+    publisher-returns: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/cgdb?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8&autoReconnect=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: egova
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    password: egovaredis
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: 10s
+        max-idle: 8
+        min-idle: 0
+      shutdown-timeout: 1s
+#eureka:
+#  client:
+#    service-url:88
+#      defaultZone: http://localhost:7001/eureka/
+#    enabled: true
+#  instance:
+#    prefer-ip-address: true
+mybatis:
+  mapper-locations: classpath:mappers/*Mapper.xml
+  type-aliases-package: org.my.springcloud.base.bean
+  configuration:
+    map-underscore-to-camel-case: true

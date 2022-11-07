@@ -1,0 +1,7 @@
+or\my\springcloud\consumer\controller\ConsumerController.class
+or\my\springcloud\consumer\config\RestTemplateConfig.class
+or\my\springcloud\consumer\service\MessageConsumerService.class
+or\my\springcloud\consumer\config\ErrorMessageConfig.class
+or\my\springcloud\consumer\service\impl\MessageConsumerServiceImpl.class
+or\my\springcloud\consumer\listener\MessageListener.class
+or\my\springcloud\consumer\Consumer02Application.class

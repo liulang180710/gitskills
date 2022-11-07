@@ -1,0 +1,44 @@
+server:
+  port: 8019
+spring:
+  application:
+    name: my-consumer-server
+  zipkin:
+    base-url: http://114.116.106.172:9411
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+  cloud:
+    stream:
+      binders:
+        defaultRabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: 114.116.106.172
+                port: 5672
+                username: guest
+                password: guest
+                virtual-host: /
+      bindings:
+        input-in-0:
+          destination: demoExchange
+          contentType: application/json
+          group: group1
+    function:
+        # functionName对应服务中的Bean
+        definition: input
+    nacos:
+      discovery:  #使用注册中心
+        server-addr: 114.116.106.172:8848 #Nacos访问地址
+        cluster-name: HB
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://114.116.106.172:7001/eureka/
+#    enabled: true
+#  instance:
+#    prefer-ip-address: true

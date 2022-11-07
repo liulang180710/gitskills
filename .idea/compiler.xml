@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="consumer" />
+        <module name="zuul" />
+        <module name="api" />
+        <module name="producer02" />
+        <module name="gateway" />
+        <module name="gateway2" />
+        <module name="base" />
+        <module name="producer" />
+        <module name="consumer02" />
+        <module name="config" />
+        <module name="spring-cloud-eureka" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api" target="1.8" />
+      <module name="base" target="1.8" />
+      <module name="config" target="1.8" />
+      <module name="consumer" target="1.8" />
+      <module name="consumer02" target="1.8" />
+      <module name="gateway" target="1.8" />
+      <module name="gateway2" target="1.8" />
+      <module name="model" target="1.8" />
+      <module name="my-spring-cloud-parent" target="1.8" />
+      <module name="my-springcloud" target="1.8" />
+      <module name="producer" target="1.8" />
+      <module name="producer02" target="1.8" />
+      <module name="spring-cloud-eureka" target="1.8" />
+      <module name="spring-cloud-producer" target="1.8" />
+      <module name="zipkin" target="1.8" />
+      <module name="zuul" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api" options="-parameters" />
+      <module name="base" options="-parameters" />
+      <module name="config" options="-parameters" />
+      <module name="consumer" options="-parameters" />
+      <module name="consumer02" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="gateway2" options="-parameters" />
+      <module name="model" options="-parameters" />
+      <module name="my-springcloud" options="-parameters" />
+      <module name="producer" options="-parameters" />
+      <module name="producer02" options="-parameters" />
+      <module name="spring-cloud-eureka" options="-parameters" />
+      <module name="spring-cloud-producer" options="-parameters" />
+      <module name="zipkin" options="-parameters" />
+      <module name="zuul" options="-parameters" />
+    </option>
+  </component>
+</project>

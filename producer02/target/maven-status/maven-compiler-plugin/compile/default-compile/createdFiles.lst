@@ -1,0 +1,7 @@
+org\my\springcloud\producer02\dao\HumanInfoMapper.class
+org\my\springcloud\producer02\service\impl\HumanInfoManagerImpl.class
+org\my\springcloud\producer02\config\CommonConfig.class
+org\my\springcloud\producer02\controller\MessageController.class
+org\my\springcloud\producer02\Producer02Application.class
+org\my\springcloud\producer02\service\HumanInfoManager.class
+org\my\springcloud\producer02\controller\HumanInfoController.class
