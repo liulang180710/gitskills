@@ -8,7 +8,7 @@ spring:
       discovery:
         server-addr: 114.116.106.172:8848
     gateway:
-      routes:
+      routes: #路由规则
         - id: consumer-server
           uri: lb://my-consumer-server
           predicates:

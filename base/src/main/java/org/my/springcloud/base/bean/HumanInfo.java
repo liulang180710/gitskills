@@ -16,4 +16,6 @@ public class HumanInfo implements Serializable {
     private String regionName;
     private int unitID;
     private String unitName;
+    private int age;
+    private String telMobile;
 }
