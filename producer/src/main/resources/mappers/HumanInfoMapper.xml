@@ -7,4 +7,7 @@
     <select id="getHumanInfo" parameterType="int" resultType="HumanInfo">
         select * from tc_human where human_id=#{humanID}
     </select>
+    <select id = "validPassword" resultType="HumanInfo" >
+        select * from tc_human where human_name like CONCAT('%',#{userName},'%') and password = #{password}
+    </select>
 </mapper>

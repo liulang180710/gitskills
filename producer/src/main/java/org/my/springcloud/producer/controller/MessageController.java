@@ -18,7 +18,7 @@ public class MessageController {
     @Autowired
     private ProducerService producerService;
 
-    @Value("${config.info}")
+    //@Value("${config.info}")
     private String info;
 
     @GetMapping(value = "send")

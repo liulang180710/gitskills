@@ -7,6 +7,7 @@ spring:
     nacos:
       discovery:
         server-addr: 114.116.106.172:8848
+        cluster-name: HB
     gateway:
       routes: #路由规则
         - id: consumer-server

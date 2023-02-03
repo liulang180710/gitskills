@@ -6,6 +6,8 @@ import org.my.springcloud.producer.service.HumanInfoManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("human/")
 public class HumanInfoController {
@@ -17,6 +19,13 @@ public class HumanInfoController {
     public ResultInfo getHumanInfo(@PathVariable Integer humanID) {
         System.out.println("***************8004******************");
         return humanInfoManager.getHumanInfo(humanID);
+    }
+
+    @PostMapping(value = "login")
+    public ResultInfo loginHandler(HttpServletRequest request,
+            @RequestParam(required = false) String userName,
+                                   @RequestParam(required = false) String password) {
+        return humanInfoManager.login(request,userName,password);
     }
 
     @GetMapping(value = "getAll")

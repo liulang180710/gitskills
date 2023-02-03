@@ -3,13 +3,13 @@ server:
 spring:
   application:
     name: my-consumer-server
-  zipkin:
-    base-url: http://114.116.106.172:9411
-    sender:
-      type: web
-  sleuth:
-    sampler:
-      probability: 1.0
+#  zipkin:
+#    base-url: http://114.116.106.172:9411
+#    sender:
+#      type: web
+#  sleuth:
+#    sampler:
+#      probability: 1.0
   cloud:
     stream:
       binders:

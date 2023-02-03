@@ -11,3 +11,4 @@ spring:
         file-extension: yaml  #后缀名
         group: DEFAULT_GROUP      #分组
         namespace: public  #命名空间的id
+        refresh-enabled: false

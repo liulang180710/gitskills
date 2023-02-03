@@ -1,9 +1,7 @@
 package org.my.springcloud.producer02.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.rabbitmq.client.AMQP;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -11,7 +9,6 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
@@ -19,7 +16,6 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.my.springcloud.base.bean.HumanInfo;
 import org.my.springcloud.base.bean.ResultInfo;
-import org.my.springcloud.producer02.dao.HumanInfoMapper;
 import org.my.springcloud.producer02.service.ElasticSearchManager;
 import org.my.springcloud.producer02.service.HumanInfoManager;
 import org.springframework.beans.factory.annotation.Autowired;
