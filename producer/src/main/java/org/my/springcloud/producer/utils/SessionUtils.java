@@ -319,7 +319,7 @@ public class SessionUtils {
 	}
 
 
-	private static void removeHumanList(){
+	public static void removeHumanList(){
 		HUMAN_SESSION_LIST.remove();
 	}
 

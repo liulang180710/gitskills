@@ -10,10 +10,17 @@ spring:
         cluster-name: HB
     gateway:
       routes: #路由规则
-        - id: consumer-server
+        - id: my-consumer-server
           uri: lb://my-consumer-server
           predicates:
-            - Path=/human/remote/**
+            - Path=/human/**  # 请求路径必须符合指定规则
+            - RemoteAddr=192.168.1.1/24 # 请求者IP必须是指定的IP
+            - After=2023-10-13T21:57:33.993+08:00[Asia/Shanghai]
+#            - Header=
+#            - Host=
+#            - Query=
+          filters: # 局部过滤器
+#            - AddRequestHearder=truth, liulang is your father
       globalcors: # 跨域
         cors-configurations:
           #仅在开发环境设置为*
@@ -21,6 +28,8 @@ spring:
             allowedOrigins: "*"
             allowedHeaders: "*"
             allowedMethods: "*"
+#      default-filters: # 全局filter，对所有的服务都添加请求头参数
+#        - AddRequestHearder=truth, liulang is your father
   main:
     web-application-type: reactive
 

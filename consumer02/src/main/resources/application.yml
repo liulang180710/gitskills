@@ -18,13 +18,13 @@ spring:
           multiplier: 1
           max-attempts: 3
           stateless: true
-  zipkin:
-    base-url: http://114.116.106.172:9411
-    sender:
-      type: web
-  sleuth:
-    sampler:
-      probability: 1.0
+#  zipkin:
+#    base-url: http://114.116.106.172:9411
+#    sender:
+#      type: web
+#  sleuth:
+#    sampler:
+#      probability: 1.0
   cloud:
     nacos:
       discovery:  #使用注册中心
