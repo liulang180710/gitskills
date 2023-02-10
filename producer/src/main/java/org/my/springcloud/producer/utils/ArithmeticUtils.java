@@ -1,6 +1,7 @@
 package org.my.springcloud.producer.utils;
 
 import org.my.springcloud.base.bean.ListNode;
+import org.my.springcloud.base.bean.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class ArithmeticUtils {
@@ -534,5 +536,69 @@ public class ArithmeticUtils {
             }
         }
         return s.substring(begin, begin + maxLen);
+    }
+
+    /**
+     * 中序遍历
+     */
+    public List<Integer> inorderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        inorder(root, res);
+        return res;
+    }
+
+    public void inorder(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        inorder(root.left, res);
+        res.add(root.val);
+        inorder(root.right, res);
+    }
+
+    public List<Integer> inorderTraversal2(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        Deque<TreeNode> stk = new LinkedList<>();
+            while (root != null || !stk.isEmpty()) {
+                while (root != null) {
+                    stk.push(root);
+                    root = root.left;
+                }
+                root = stk.pop();
+                res.add(root.val);
+                root = root.right;
+            }
+        return res;
+    }
+
+    /**
+     * 层次遍历，需要用到队列
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if (root == null) {
+            return ret;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            List<Integer> level = new ArrayList<>();
+            int currentLevelSize = queue.size();
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                TreeNode node = queue.poll();
+                level.add(node.val);
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            ret.add(level);
+        }
+
+        return ret;
     }
 }
