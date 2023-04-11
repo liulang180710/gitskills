@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 public class ArithmeticUtils {
 
@@ -538,6 +539,20 @@ public class ArithmeticUtils {
         return s.substring(begin, begin + maxLen);
     }
 
+    public void flatten(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        inorder(root, res);
+        if (res != null && res.size() > 0) {
+            root = new TreeNode();
+            root.val = res.get(0);
+            for (int i= 1; i< res.size(); i++) {
+                root.left = null;
+                root.right.val = res.get(i);
+            }
+        }
+
+    }
+
     /**
      * 中序遍历
      */
@@ -558,7 +573,7 @@ public class ArithmeticUtils {
 
     public List<Integer> inorderTraversal2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
-        Deque<TreeNode> stk = new LinkedList<>();
+        Stack<TreeNode> stk = new Stack<>();
             while (root != null || !stk.isEmpty()) {
                 while (root != null) {
                     stk.push(root);
@@ -576,7 +591,7 @@ public class ArithmeticUtils {
      * @param root
      * @return
      */
-    public List<List<Integer>> levelOrder(TreeNode root) {
+    public static List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> ret = new ArrayList<>();
         if (root == null) {
             return ret;
@@ -603,7 +618,7 @@ public class ArithmeticUtils {
     }
 
     /**
-     * 返回树的深度
+     * 返回树的最大深度
      * @param root
      * @return
      */
@@ -641,6 +656,70 @@ public class ArithmeticUtils {
         }
         return ans;
     }
+
+    /**
+     * 返回树的最小深度
+     * @param root
+     * @return
+     */
+    public int minDepth(TreeNode root) {
+        if(root == null) return 0;
+        //递归条件里分为三种情况
+        //1.左孩子和有孩子都为空的情况，说明到达了叶子节点，直接返回1即可
+        if(root.left == null && root.right == null) return 1;
+        //2.如果左孩子和右孩子其中一个为空，那么需要返回比较大的那个孩子的深度
+        int m1 = minDepth(root.left);
+        int m2 = minDepth(root.right);
+        //这里其中一个节点为空，说明m1和m2有一个必然为0，所以可以返回m1 + m2 + 1;
+        if(root.left == null || root.right == null) return m1 + m2 + 1;
+
+        //3.最后一种情况，也就是左右孩子都不为空，返回最小深度+1即可
+        return Math.min(m1,m2) + 1;
+    }
+
+    /**
+     * 给你一个整数 n ，请你生成并返回所有由 n 个节点组成且节点值从 1 到 n 互不相同的不同 二叉搜索树
+     * @param n
+     * @return
+     */
+    public List<TreeNode> generateTrees(int n) {
+        if (n == 0) {
+            return new LinkedList<>();
+        }
+        return generateTrees(1, n);
+    }
+
+    public List<TreeNode> generateTrees(int start, int end) {
+        List<TreeNode> allTrees = new LinkedList<>();
+        if (start > end) {
+            allTrees.add(null);
+            return allTrees;
+        }
+
+        // 枚举可行根节点
+        for (int i = start; i <= end; i++) {
+            // 获得所有可行的左子树集合
+            List<TreeNode> leftTrees = generateTrees(start, i - 1);
+
+            // 获得所有可行的右子树集合
+            List<TreeNode> rightTrees = generateTrees(i + 1, end);
+
+            // 从左子树集合中选出一棵左子树，从右子树集合中选出一棵右子树，拼接到根节点上
+            for (TreeNode left : leftTrees) {
+                for (TreeNode right : rightTrees) {
+                    TreeNode currTree = new TreeNode(i);
+                    currTree.left = left;
+                    currTree.right = right;
+                    allTrees.add(currTree);
+                }
+            }
+        }
+        return allTrees;
+    }
+
+
+
+
 
 
 }
