@@ -1,5 +1,6 @@
 package org.my.springcloud.producer.utils;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -114,6 +115,7 @@ public class SyncUtils {
         }).start();
     }
 
+    //synchronized + wait
     public static void sequentialOutputThree() {
         WaitNotify waitNotify = new WaitNotify(10, 1);
         new Thread(()->
@@ -127,6 +129,14 @@ public class SyncUtils {
     /*public static void main(String[] args) {
 
     }*/
+
+    // 信号量
+    public static void sequentialOutputFour() {
+        PrintABC printer = new PrintABC();
+        new Thread(() -> printer.print('A', printer.semaphoreA, printer.semaphoreB)).start();
+        new Thread(() -> printer.print('B', printer.semaphoreB, printer.semaphoreC)).start();
+        new Thread(() -> printer.print('C', printer.semaphoreC, printer.semaphoreA)).start();
+    }
 
 }
 
@@ -157,3 +167,25 @@ class WaitNotify {
         }
     }
 }
+
+
+class PrintABC {
+    public Semaphore semaphoreA = new Semaphore(1);
+    public Semaphore semaphoreB = new Semaphore(0);
+    public Semaphore semaphoreC = new Semaphore(0);
+
+
+
+    public void print(char c, Semaphore current, Semaphore next) {
+        for (int i = 0; i < 10; i++) {
+            try {
+                current.acquire();
+                System.out.print(c);
+                next.release();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
