@@ -210,12 +210,12 @@ public class ArithmeticUtils {
         ListNode preNode = newHeadNode;
         while(currentNode != null && currentNode.next !=null) {
             ListNode tempNode = currentNode.next.next; //记录第三个节点
-            preNode.next = currentNode.next; //第一个节点等于第二个节点
-            currentNode.next.next = currentNode;
-            currentNode.next = tempNode;
+            preNode.next = currentNode.next; //-1节点指向第二个节点
+            currentNode.next.next = currentNode; //第二个节点指向第一个节点
+            currentNode.next = tempNode; //第一个节点指向第三个节点
             //向前移动
-            preNode = currentNode;
-            currentNode =tempNode;
+            preNode = currentNode;// -1节点向前移动一步
+            currentNode =tempNode;//第一个节点向前移动一步
         }
         return newHeadNode.next;
     }
@@ -539,9 +539,10 @@ public class ArithmeticUtils {
         return s.substring(begin, begin + maxLen);
     }
 
+    // 114. 二叉树展开为链表
     public void flatten(TreeNode root) {
         List<Integer> res = new ArrayList<>();
-        inorder(root, res);
+        preOrder(root, res);
         if (res != null && res.size() > 0) {
             root = new TreeNode();
             root.val = res.get(0);
@@ -550,8 +551,26 @@ public class ArithmeticUtils {
                 root.right.val = res.get(i);
             }
         }
-
     }
+
+    /**
+     * 先序遍历
+     */
+    public List<Integer> preOrderTraversal(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        preOrder(root, res);
+        return res;
+    }
+
+    public void preOrder(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+        res.add(root.val);
+        preOrder(root.left, res);
+        preOrder(root.right, res);
+    }
+
 
     /**
      * 中序遍历
@@ -626,9 +645,7 @@ public class ArithmeticUtils {
         if (root == null) {
             return 0;
         } else {
-            int leftHeight = maxDepth(root.left);
-            int rightHeight = maxDepth(root.right);
-            return Math.max(leftHeight, rightHeight) + 1;
+            return Math.max(maxDepth(root.left), maxDepth(root.right)) + 1;
         }
     }
 
@@ -848,6 +865,51 @@ public class ArithmeticUtils {
         return myBuildTree(preorder, inorder, 0, n - 1, 0, n - 1);
     }
 
+    /**
+     * 根据中序遍历和后序遍历重新创建树
+     */
+    int post_idx;
+    int[] postorder;
+    int[] inorder;
+    Map<Integer, Integer> idx_map = new HashMap<>();
+
+    public TreeNode helper(int in_left, int in_right) {
+        // 如果这里没有节点构造二叉树了，就结束
+        if (in_left > in_right) {
+            return null;
+        }
+
+        // 选择 post_idx 位置的元素作为当前子树根节点
+        int root_val = postorder[post_idx];
+        TreeNode root = new TreeNode(root_val);
+
+        // 根据 root 所在位置分成左右两棵子树
+        int index = idx_map.get(root_val);
+
+        // 下标减一
+        post_idx--;
+        // 构造右子树
+        root.right = helper(index + 1, in_right);
+        // 构造左子树
+        root.left = helper(in_left, index - 1);
+        return root;
+    }
+
+    public TreeNode buildTree2(int[] inorder, int[] postorder) {
+        this.postorder = postorder;
+        this.inorder = inorder;
+        // 从后序遍历的最后一个元素开始
+        post_idx = postorder.length - 1;
+
+        // 建立（元素，下标）键值对的哈希表
+        int idx = 0;
+        for (Integer val : inorder) {
+            idx_map.put(val, idx++);
+        }
+
+        return helper(0, inorder.length - 1);
+    }
+
 
     /**
      * 验证回文字符串
@@ -893,6 +955,284 @@ public class ArithmeticUtils {
         }
         StringBuffer sgood_rev = new StringBuffer(sgood).reverse();
         return sgood.toString().equals(sgood_rev.toString());
+    }
+
+
+    /**
+     *  124. 二叉树中的最大路径和
+     */
+    int maxSum = Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        maxGain(root);
+        return maxSum;
+    }
+
+    public int maxGain(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        // 递归计算左右子节点的最大贡献值
+        // 只有在最大贡献值大于 0 时，才会选取对应子节点
+        int leftGain = Math.max(maxGain(node.left), 0);
+        int rightGain = Math.max(maxGain(node.right), 0);
+
+        // 节点的最大路径和取决于该节点的值与该节点的左右子节点的最大贡献值
+        int priceNewpath = node.val + leftGain + rightGain;
+
+        // 更新答案
+        maxSum = Math.max(maxSum, priceNewpath);
+
+        // 返回节点的最大贡献值
+        return node.val + Math.max(leftGain, rightGain);
+    }
+
+    /**
+     * 112. 判断路径总和是否等于某个值
+     * @param root
+     * @param sum
+     * @return
+     */
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null) {
+            return false;
+        }
+        if (root.left == null && root.right == null) {
+            return sum == root.val;
+        }
+        return hasPathSum(root.left, sum - root.val) || hasPathSum(root.right, sum - root.val);
+    }
+
+    /**
+     * 129. 求根节点到叶节点数字之和
+     */
+    public int sumNumbers(TreeNode root) {
+        return dfs(root, 0);
+    }
+
+    public int dfs(TreeNode root, int prevSum) {
+        if (root == null) {
+            return 0;
+        }
+        int sum = prevSum * 10 + root.val;
+        if (root.left == null && root.right == null) {
+            return sum;
+        } else {
+            return dfs(root.left, sum) + dfs(root.right, sum);
+        }
+    }
+
+
+    // 107. 二叉树的层序遍历 II
+    public static List<List<Integer>> levelOrderBottom(TreeNode root) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if (root == null) {
+            return ret;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            List<Integer> level = new ArrayList<>();
+            int currentLevelSize = queue.size();
+            for (int i = 1; i <= currentLevelSize; ++i) {
+                TreeNode node = queue.poll();
+                level.add(node.val);
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+            }
+            ret.add(level);
+        }
+
+        List<List<Integer>> newRet = new ArrayList<>();
+        if (ret != null && ret.size() != 0) {
+            newRet = new ArrayList<>(ret.size());
+            for (int i= ret.size() -1 ;i>=0;i--) {
+                newRet.add(ret.get(i));
+            }
+        }
+        return newRet;
+    }
+
+    /**
+     * 判断二叉树是否是平衡二叉树
+     * @param root
+     * @return
+     */
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        } else {
+            return Math.abs(height(root.left) - height(root.right)) <= 1 && isBalanced(root.left) && isBalanced(root.right);
+        }
+    }
+
+    public int height(TreeNode root) {
+        if (root == null) {
+            return 0;
+        } else {
+            return Math.max(height(root.left), height(root.right)) + 1;
+        }
+    }
+
+    /**
+     * 将有序数组转换为二叉搜索树
+     * @param nums
+     * @return
+     */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return helper(nums, 0, nums.length - 1);
+    }
+
+    public TreeNode helper(int[] nums, int left, int right) {
+        if (left > right) {
+            return null;
+        }
+
+        // 总是选择中间位置左边的数字作为根节点
+        int mid = (left + right) / 2;
+
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = helper(nums, left, mid - 1);
+        root.right = helper(nums, mid + 1, right);
+        return root;
+    }
+
+
+    /**
+     * 路径总和2，找到所有满足条件的路径
+     */
+    List<List<Integer>> ret = new LinkedList<>();
+    Deque<Integer> path = new LinkedList<>();
+
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        dfs2(root, targetSum);
+        return ret;
+    }
+
+    public void dfs2(TreeNode root, int targetSum) {
+        if (root == null) {
+            return;
+        }
+        path.offerLast(root.val);
+        targetSum -= root.val;
+        if (root.left == null && root.right == null && targetSum == 0) {
+            ret.add(new LinkedList<Integer>(path));
+        }
+        dfs2(root.left, targetSum);
+        dfs2(root.right, targetSum);
+        path.pollLast();
+    }
+
+    /**
+     * 最近的三个数之和
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int best = 10000000;
+
+        // 枚举 a
+        for (int i = 0; i < n; ++i) {
+            // 保证和上一次枚举的元素不相等
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            // 使用双指针枚举 b 和 c
+            int j = i + 1, k = n - 1;
+            while (j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+                // 如果和为 target 直接返回答案
+                if (sum == target) {
+                    return target;
+                }
+                // 根据差值的绝对值来更新答案
+                if (Math.abs(sum - target) < Math.abs(best - target)) {
+                    best = sum;
+                }
+                if (sum > target) {
+                    // 如果和大于 target，移动 c 对应的指针
+                    int k0 = k - 1;
+                    // 移动到下一个不相等的元素
+                    while (j < k0 && nums[k0] == nums[k]) {
+                        --k0;
+                    }
+                    k = k0;
+                } else {
+                    // 如果和小于 target，移动 b 对应的指针
+                    int j0 = j + 1;
+                    // 移动到下一个不相等的元素
+                    while (j0 < k && nums[j0] == nums[j]) {
+                        ++j0;
+                    }
+                    j = j0;
+                }
+            }
+        }
+        return best;
+    }
+
+    /***
+     * 四个数之和
+     * @param nums
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> quadruplets = new ArrayList<List<Integer>>();
+        if (nums == null || nums.length < 4) {
+            return quadruplets;
+        }
+        Arrays.sort(nums);
+        int length = nums.length;
+        for (int i = 0; i < length - 3; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            if ((long) nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) {
+                break;
+            }
+            if ((long) nums[i] + nums[length - 3] + nums[length - 2] + nums[length - 1] < target) {
+                continue;
+            }
+            for (int j = i + 1; j < length - 2; j++) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                if ((long) nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) {
+                    break;
+                }
+                if ((long) nums[i] + nums[j] + nums[length - 2] + nums[length - 1] < target) {
+                    continue;
+                }
+                int left = j + 1, right = length - 1;
+                while (left < right) {
+                    long sum = (long) nums[i] + nums[j] + nums[left] + nums[right];
+                    if (sum == target) {
+                        quadruplets.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+                        while (left < right && nums[left] == nums[left + 1]) {
+                            left++;
+                        }
+                        left++;
+                        while (left < right && nums[right] == nums[right - 1]) {
+                            right--;
+                        }
+                        right--;
+                    } else if (sum < target) {
+                        left++;
+                    } else {
+                        right--;
+                    }
+                }
+            }
+        }
+        return quadruplets;
     }
 
 
