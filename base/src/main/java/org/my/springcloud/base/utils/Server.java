@@ -2,7 +2,9 @@ package org.my.springcloud.base.utils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -10,13 +12,72 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Server {
+    static class Worker implements Runnable{
+        private Thread thread;
+        private Selector selector;
+        private String name;
+        private volatile boolean start = false;
+        private ConcurrentLinkedQueue<Runnable> queue = new ConcurrentLinkedQueue<>();
+
+        public Worker(String name) {
+            this.name = name;
+        }
+        public void register(SocketChannel socketChannel) throws IOException {
+            if (!start) {
+                thread = new Thread(this, name);
+                selector = Selector.open();
+                start = true;
+            }
+            queue.add(()->{
+                try{
+                    socketChannel.register(selector, SelectionKey.OP_READ, null);
+                }catch (ClosedChannelException e) {
+                    e.printStackTrace();
+                }
+            });
+            selector.wakeup(); //唤醒select
+
+        }
+
+        @Override
+        public void run() {
+           while(true) {
+               try{
+                   selector.select(); //阻塞
+                   Runnable task = queue.poll();
+                   if (task != null) {
+                       task.run();
+                   }
+                   Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                   while (iterator.hasNext()) {
+                       SelectionKey key = iterator.next();
+                       iterator.remove();
+                       if (key.isReadable()) {
+                           ByteBuffer buffer = ByteBuffer.allocate(16);
+                           SocketChannel socketChannel = (SocketChannel) key.channel();
+                           socketChannel.read(buffer);
+                           buffer.flip();
+                           System.out.println(buffer);
+                       }
+                   }
+               }catch (IOException e) {
+                   e.printStackTrace();
+               }
+           }
+        }
+
+    }
+
     public static void main(String[] args) throws IOException {
         creatServer();
         return;
     }
 
+    //同步阻塞
     private static void creatServer() throws IOException {
         // 创建服务器
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -82,6 +143,56 @@ public class Server {
                     ByteBuffer byteBuffer = ByteBuffer.allocate(16);
                     SelectionKey selectionKey2 = socketChannel.register(selector, 0, byteBuffer);
                     selectionKey2.interestOps(SelectionKey.OP_READ);
+                }else if (selectionKey1.isReadable()) {
+                    try{
+                        SocketChannel channel = (SocketChannel)selectionKey1.channel();
+                        ByteBuffer buffer = (ByteBuffer) selectionKey1.attachment();
+                        int read = channel.read(buffer);
+                        if (read == -1) {
+                            selectionKey1.cancel();
+                        }else {
+                            split(buffer);
+                            if (buffer.position() == buffer.limit()) {
+                                ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() * 2);
+                                buffer.flip();
+                                newBuffer.put(buffer);
+                                selectionKey1.attach(newBuffer);
+                            }
+                        }
+                    }catch (Exception e) {
+                        selectionKey1.cancel();
+                    }
+                }
+            }
+        }
+    }
+
+    public static void createServerBySelectorAndThread() throws IOException {
+        Selector selector = Selector.open();
+        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+        //设置为非阻塞模式
+        serverSocketChannel.configureBlocking(false);
+
+        SelectionKey selectionKey = serverSocketChannel.register(selector,0,null);
+
+        selectionKey.interestOps(SelectionKey.OP_ACCEPT);
+        serverSocketChannel.bind(new InetSocketAddress(8080));
+        Worker[] workers = new Worker[2];
+        for (int i = 0; i < workers.length ; i++) {
+            workers[i] = new Worker("worker-" + i);
+        }
+        AtomicInteger atomicInteger = new AtomicInteger();
+
+        while (true) {
+            selector.select();
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey selectionKey1 = iterator.next();
+                iterator.remove();
+                if (selectionKey1.isAcceptable()) {
+                    SocketChannel socketChannel = serverSocketChannel.accept();
+                    socketChannel.configureBlocking(false);
+                    workers[atomicInteger.incrementAndGet() % workers.length].register(socketChannel);
                 }else if (selectionKey1.isReadable()) {
                     try{
                         SocketChannel channel = (SocketChannel)selectionKey1.channel();

@@ -1235,6 +1235,109 @@ public class ArithmeticUtils {
         return quadruplets;
     }
 
+    // 0移动
+    public static void moveZeroes(int[] nums) {
+        if (nums.length == 1) {
+            return;
+        }else {
+            int n = nums.length;
+            for (int i=0 ;i < n ;i ++) {
+                if (nums[i] == 0) {
+                    int k =i;
+                    for (int j=k+1; j<n ;j++) {
+                        if (nums[j] == 0) {
+                            continue;
+                        }
+                        int temp = nums[j];
+                        nums[j] = nums[k];
+                        nums[k] = temp;
+                        k =j;
+                    }
+                }
+            }
+        }
+    }
 
+    public void moveZeroes2(int[] nums) {
+        int n = nums.length, left = 0, right = 0;
+        while (right < n) {
+            if (nums[right] != 0) {
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+                left++;
+            }
+            right++;
+        }
+    }
 
+    // 128. 最长连续序列
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> num_set = new HashSet<Integer>();
+        for (int num : nums) {
+            num_set.add(num);
+        }
+
+        int longestStreak = 0;
+        for (int num : num_set) {
+            if (!num_set.contains(num - 1)) {
+                int currentNum = num;
+                int currentStreak = 1;
+
+                while (num_set.contains(currentNum + 1)) {
+                    currentNum += 1;
+                    currentStreak += 1;
+                }
+
+                longestStreak = Math.max(longestStreak, currentStreak);
+            }
+        }
+
+        return longestStreak;
+    }
+
+    // 判断是否是回文链表
+    public boolean isPalindrome(ListNode head) {
+        List<Integer> vals = new ArrayList<>();
+
+        // 将链表的值复制到数组中
+        ListNode currentNode = head;
+        while (currentNode != null) {
+            vals.add(currentNode.val);
+            currentNode = currentNode.next;
+        }
+
+        // 使用双指针判断是否回文
+        int front = 0;
+        int back = vals.size() - 1;
+        while (front < back) {
+            if (!vals.get(front).equals(vals.get(back))) {
+                return false;
+            }
+            front++;
+            back--;
+        }
+        return true;
+    }
+
+    // 判断是否存在环
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null) {
+            return false;
+        }
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while (slow != fast) {
+            if (fast == null || fast.next == null) {
+                return false;
+            }
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+
+    }
 }
