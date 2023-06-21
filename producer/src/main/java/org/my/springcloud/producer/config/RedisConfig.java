@@ -68,13 +68,6 @@ public class RedisConfig extends CachingConfigurerSupport {
         poolConfig.setMaxIdle(200);
         //每次释放连接的最大数目，默认是3
         poolConfig.setNumTestsPerEvictionRun(1024);
-        //逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
-        poolConfig.setTimeBetweenEvictionRunsMillis(30000);
-        //连接的最小空闲时间 默认1800000毫秒(30分钟)
-        poolConfig.setMinEvictableIdleTimeMillis(-1);
-        poolConfig.setSoftMinEvictableIdleTimeMillis(10000);
-        //最大建立连接等待时间。如果超过此时间将接到异常。设为-1表示无限制。
-        poolConfig.setMaxWaitMillis(1500);
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestWhileIdle(true);
         poolConfig.setTestOnReturn(false);

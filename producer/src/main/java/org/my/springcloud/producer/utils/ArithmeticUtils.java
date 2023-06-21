@@ -221,6 +221,7 @@ public class ArithmeticUtils {
     }
 
     /**
+     * 28. 找出字符串中第一个匹配项的下标
      * 实现 strStr() 函数，找到haystack中needle字符串的位置
      * @param haystack
      * @param needle
@@ -1336,6 +1337,126 @@ public class ArithmeticUtils {
         }
         return true;
     }
+
+    /**
+     * 旋转二叉树
+     * @param root
+     * @return
+     */
+    public TreeNode invertTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode left = invertTree(root.left);
+        TreeNode right = invertTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
+    }
+
+    int ans;
+    public int diameterOfBinaryTree(TreeNode root) {
+        ans = 1;
+        depth(root);
+        return ans - 1;
+    }
+    public int depth(TreeNode node) {
+        if (node == null) {
+            return 0; // 访问到空节点了，返回0
+        }
+        int L = depth(node.left); // 左儿子为根的子树的深度
+        int R = depth(node.right); // 右儿子为根的子树的深度
+        ans = Math.max(ans, L+R+1); // 计算d_node即L+R+1 并更新ans
+        return Math.max(L, R) + 1; // 返回该节点为根的子树的深度
+    }
+
+
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) {
+            return null;
+        }
+        ListNode result = null;
+        ListNode tempNode = headB;
+        while (headA != null) {
+            while (headB != null) {
+                if (headA != headB) {
+                    headB = headB.next;
+                }else {
+                    result = headB;
+                    break;
+                }
+            }
+            if (result != null) {
+                break;
+            }
+            headB = tempNode;
+            headA = headA.next;
+
+        }
+        return result;
+    }
+
+    //43. 字符串相乘
+    public String multiply(String num1, String num2) {
+        if (num1.equals("0") || num2.equals("0")) {
+            return "0";
+        }
+        String ans = "0";
+        int m = num1.length(), n = num2.length();
+        for (int i = n - 1; i >= 0; i--) {
+            StringBuffer curr = new StringBuffer();
+            int add = 0;
+            for (int j = n - 1; j > i; j--) {
+                curr.append(0);
+            }
+            int y = num2.charAt(i) - '0';
+            for (int j = m - 1; j >= 0; j--) {
+                int x = num1.charAt(j) - '0';
+                int product = x * y + add;
+                curr.append(product % 10);
+                add = product / 10;
+            }
+            if (add != 0) {
+                curr.append(add % 10);
+            }
+            ans = addStrings(ans, curr.reverse().toString());
+        }
+        return ans;
+    }
+
+    //415. 字符串相加
+    public String addStrings(String num1, String num2) {
+        int i = num1.length() - 1, j = num2.length() - 1, add = 0;
+        StringBuffer ans = new StringBuffer();
+        while (i >= 0 || j >= 0 || add != 0) {
+            int x = i >= 0 ? num1.charAt(i) - '0' : 0;
+            int y = j >= 0 ? num2.charAt(j) - '0' : 0;
+            int result = x + y + add;
+            ans.append(result % 10);
+            add = result / 10;
+            i--;
+            j--;
+        }
+        ans.reverse();
+        return ans.toString();
+    }
+
+    public String addBinary(String a, String b) {
+        int i = a.length() - 1, j = b.length() - 1, add = 0;
+        StringBuffer ans = new StringBuffer();
+        while (i >= 0 || j >= 0 || add != 0) {
+            int x = i >= 0 ? a.charAt(i) - '0' : 0;
+            int y = j >= 0 ? b.charAt(j) - '0' : 0;
+            int result = x + y + add;
+            ans.append(result % 2);
+            add = result / 2;
+            i--;
+            j--;
+        }
+        ans.reverse();
+        return ans.toString();
+    }
+
 
     public static void main(String[] args) {
 
