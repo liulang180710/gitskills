@@ -77,7 +77,7 @@ public class Server {
         return;
     }
 
-    //同步阻塞
+    //同步阻塞（accept、read都会阻塞线程）
     private static void creatServer() throws IOException {
         // 创建服务器
         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
@@ -137,10 +137,14 @@ public class Server {
                 SelectionKey selectionKey1 = iterator.next();
                 iterator.remove();
                 if (selectionKey1.isAcceptable()) {
+                    // seelct 在事件未处理时，它不会阻塞
+                    // 获取selector关注的连接事件，从而获取channel
                     ServerSocketChannel channel = (ServerSocketChannel)selectionKey1.channel();
                     SocketChannel socketChannel = channel.accept();
+                    // 非阻塞
                     socketChannel.configureBlocking(false);
                     ByteBuffer byteBuffer = ByteBuffer.allocate(16);
+                    // 对连接的socketChannel增加关注的事件，绑定到selector上
                     SelectionKey selectionKey2 = socketChannel.register(selector, 0, byteBuffer);
                     selectionKey2.interestOps(SelectionKey.OP_READ);
                 }else if (selectionKey1.isReadable()) {
@@ -148,6 +152,7 @@ public class Server {
                         SocketChannel channel = (SocketChannel)selectionKey1.channel();
                         ByteBuffer buffer = (ByteBuffer) selectionKey1.attachment();
                         int read = channel.read(buffer);
+                        // 客户端正常断开后需要移除
                         if (read == -1) {
                             selectionKey1.cancel();
                         }else {

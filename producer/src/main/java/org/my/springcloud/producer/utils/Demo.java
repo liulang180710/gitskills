@@ -1,5 +1,7 @@
 package org.my.springcloud.producer.utils;
 
+import org.my.springcloud.producer.service.HumanInfoManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -109,13 +111,6 @@ public class Demo {
             return null;
         }
         return objectArray[0];
-    }
-
-    public static void main(String[] args) {
-        Demo demoMap = new Demo();
-        demoMap.createList(10);
-        demoMap.put("1", "ceshi");
-        System.out.println(demoMap.get("1").toString());
     }
 
 
