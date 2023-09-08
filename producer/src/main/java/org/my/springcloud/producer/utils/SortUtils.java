@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 public class SortUtils {
     /**
-    直接插入排序原理：1,4,3,2
+    直接插入排序原理：1,4,3,2，时间复杂度O(n)-O(n^2)
     1,4->1,3,4->1,2,3,4
     思路：1.从数组的第二个数开始，比较当前这个数array[i]和前面一个数array[i-1]的数值大小，如果当前的数值小于前面的数，就执行第二步
     2.将当前每次比较的数先存储起来，作为比较的对象（哨兵）index=array[i]。
@@ -39,7 +39,7 @@ public class SortUtils {
 		}
 	}
 
-    //折半插入排序
+    //折半插入排序，时间复杂度O(n^2)
     //折半插入排序的原理就是：先从数组的第二个数i开始，通过在0到i-1个数之间进行折半查找，找到当前的数需要插入的位置，然后再将要插入位置开始
     //到当前这个数前面的数进行移动，然后将当前的值插入。
 	public static int[] bInsertSort(int[] array){
@@ -119,7 +119,7 @@ public class SortUtils {
         }
     }
     /*********************************/
-	//冒泡排序
+	//冒泡排序，时间复杂度O(n^2)
 	public static int[] bubbleSort(int[] array){
 		if(array.length<=1){
 			return array;
@@ -163,7 +163,7 @@ public class SortUtils {
     public static int[] qSort(int[] array,int low ,int high){
         if(low<high){
             //找到第一轮排序之后的中间值
-            int pivotloc=partition(array,low,high);
+            int pivotloc = partition(array,low,high);
             //左边递归
             qSort(array,low,pivotloc-1);
             //右边递归
@@ -184,7 +184,7 @@ public class SortUtils {
 
 
     /******************************/
-    //简单选择排序，每一次找到最小的，然后依次找后面的
+    //简单选择排序O(n^2)，每一次找到最小的，然后依次找后面的
     public static int[] selectSort(int[] array){
         if(array.length<=1){
             return array;

@@ -86,21 +86,40 @@ public class ArithmeticUtils {
     public ListNode removeNthFromEnd(ListNode head, int n) {
         //创建头结点
         ListNode dummy = new ListNode(0, head);
-        ListNode second = dummy;
-        ListNode first = head;
+        ListNode slow = dummy;
+        ListNode fast = head;
         //快指针先找到正数第n个数
         for (int i = 0; i < n; ++i) {
-            first = first.next;
+            fast = fast.next;
         }
         //快慢指针依次向链表尾部移动
-        while (first != null) {
-            first = first.next;
-            second = second.next;
+        while (fast != null) {
+            fast = fast.next;
+            slow = slow.next;
         }
         //删除对应的值
-        second.next = second.next.next;
+        slow.next = slow.next.next;
         ListNode ans = dummy.next;
         return ans;
+    }
+
+    /**
+     * 快慢指针，慢指针一次走一格，快指针一次走两格
+     * @param head
+     * @return
+     */
+    public ListNode deleteMiddle(ListNode head) {
+        if (head == null || head.next == null) {
+            return null;
+        }
+        ListNode slow = head;
+        ListNode fast = head.next;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        slow.next = slow.next.next;
+        return head;
     }
 
     /**
@@ -591,19 +610,98 @@ public class ArithmeticUtils {
         inorder(root.right, res);
     }
 
+    // 先序遍历非递归
+    public static void preOrderIteration(TreeNode head) {
+        if (head == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(head);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            System.out.print(node.val + " ");
+            // 先将右子树压进栈中
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+    }
+
+    // 中序遍历非递归实现
     public List<Integer> inorderTraversal2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
-        Stack<TreeNode> stk = new Stack<>();
-            while (root != null || !stk.isEmpty()) {
+        Stack<TreeNode> stack = new Stack<>();
+            while (root != null || !stack.isEmpty()) {
+                // 一直向左遍历
                 while (root != null) {
-                    stk.push(root);
+                    stack.push(root);
                     root = root.left;
                 }
-                root = stk.pop();
+                root = stack.pop();
                 res.add(root.val);
                 root = root.right;
             }
         return res;
+    }
+
+    // 后序遍历非递归
+    public static void postOrderIteration(TreeNode head) {
+        if (head == null) {
+            return;
+        }
+        Stack<TreeNode> stack1 = new Stack<>();
+        Stack<TreeNode> stack2 = new Stack<>();
+        stack1.push(head);
+        while (!stack1.isEmpty()) {
+            TreeNode node = stack1.pop();
+            stack2.push(node);
+            if (node.left != null) {
+                stack1.push(node.left);
+            }
+            if (node.right != null) {
+                stack1.push(node.right);
+            }
+        }
+        while (!stack2.isEmpty()) {
+            System.out.print(stack2.pop().val + " ");
+        }
+    }
+
+
+    // 广度遍历算法（通用）
+    public int BFS(TreeNode start, TreeNode target) {
+        Queue<TreeNode> queue = new LinkedList();
+        Set<TreeNode> visited = new HashSet<>();
+        // 将起点加入队列中
+        queue.add(start);
+        visited.add(start);
+        int step = 0; // 记录步数
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i =0 ; i<size ;i++) {
+                TreeNode curNode = queue.poll();
+                // 判断是否到达终点
+                if (curNode == target) {
+                    return step;
+                }
+                // 将curNode的相邻节点加入到队列中
+                if (curNode.left != null) {
+                    queue.add(curNode.left);
+                    visited.add(curNode.left);
+                }
+                if (curNode.right != null) {
+                    queue.add(curNode.right);
+                    visited.add(curNode.right);
+                }
+
+            }
+            step ++;
+        }
+        return step;
+
     }
 
     /**
@@ -637,8 +735,24 @@ public class ArithmeticUtils {
         return ret;
     }
 
+    // 二叉搜索树中的搜索
+    public TreeNode searchBST(TreeNode root, int val) {
+        if (root == null) {
+            return null;
+        }
+        if (root.val == val) {
+            return root;
+        }
+        if (val < root.val) {
+            return searchBST(root.left, val);
+        }else {
+            return searchBST(root.right, val);
+        }
+
+    }
+
     /**
-     * 返回树的最大深度
+     * 返回树的最大深度，即为左右子树最大值+1
      * @param root
      * @return
      */
@@ -650,6 +764,26 @@ public class ArithmeticUtils {
         }
     }
 
+    // 好节点的数量，从根到该节点 X 所经过的节点中，没有任何节点的值大于 X 的值
+    public int goodNodes(TreeNode root) {
+        return dfsNode(root, Integer.MIN_VALUE);
+    }
+
+    public int dfsNode(TreeNode root, int pathMax) {
+        if (root == null) {
+            return 0;
+        }
+        // 若当前节点的值大于等于该最大值，则将答案加一，并更新路径最大值为当前节点的值
+        int res = 0;
+        if (root.val >= pathMax) {
+            res++;
+            pathMax = root.val;
+        }
+        res += dfsNode(root.left, pathMax) + dfsNode(root.right, pathMax);
+        return res;
+    }
+
+    // 返回树的最大深度方法2
     public int maxDepth2(TreeNode root) {
         if (root == null) {
             return 0;
@@ -673,6 +807,53 @@ public class ArithmeticUtils {
             ans++;
         }
         return ans;
+    }
+
+    // 省份的个数，深度遍历
+    public int findCircleNum(int[][] isConnected) {
+        int cities = isConnected.length;
+        boolean[] visited = new boolean[cities];
+        int provinces = 0;
+        for (int i = 0; i < cities; i++) {
+            if (!visited[i]) {
+                dfs(isConnected, visited, cities, i);
+                provinces++;
+            }
+        }
+        return provinces;
+    }
+
+    public void dfs(int[][] isConnected, boolean[] visited, int cities, int i) {
+        for (int j = 0; j < cities; j++) {
+            if (isConnected[i][j] == 1 && !visited[j]) {
+                visited[j] = true;
+                dfs(isConnected, visited, cities, j);
+            }
+        }
+    }
+
+    // 省份的个数，广度遍历
+    public int findCircleNum2(int[][] isConnected) {
+        int cities = isConnected.length;
+        boolean[] visited = new boolean[cities];
+        int provinces = 0;
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < cities; i++) {
+            if (!visited[i]) {
+                queue.offer(i);
+                while (!queue.isEmpty()) {
+                    int j = queue.poll();
+                    visited[j] = true;
+                    for (int k = 0; k < cities; k++) {
+                        if (isConnected[j][k] == 1 && !visited[k]) {
+                            queue.offer(k);
+                        }
+                    }
+                }
+                provinces++;
+            }
+        }
+        return provinces;
     }
 
     /**
@@ -1093,7 +1274,7 @@ public class ArithmeticUtils {
             return null;
         }
 
-        // 总是选择中间位置左边的数字作为根节点
+        // 总是选择中间位置左边的数字作为根节点·
         int mid = (left + right) / 2;
 
         TreeNode root = new TreeNode(nums[mid]);
@@ -1121,7 +1302,7 @@ public class ArithmeticUtils {
         path.offerLast(root.val);
         targetSum -= root.val;
         if (root.left == null && root.right == null && targetSum == 0) {
-            ret.add(new LinkedList<Integer>(path));
+            ret.add(new LinkedList<>(path));
         }
         dfs2(root.left, targetSum);
         dfs2(root.right, targetSum);
@@ -1455,10 +1636,5 @@ public class ArithmeticUtils {
         }
         ans.reverse();
         return ans.toString();
-    }
-
-
-    public static void main(String[] args) {
-
     }
 }

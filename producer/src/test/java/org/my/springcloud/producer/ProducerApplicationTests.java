@@ -6,6 +6,7 @@ import org.my.springcloud.producer.service.MyService;
 import org.my.springcloud.producer.service.impl.HumanInfoManagerImpl;
 import org.my.springcloud.producer.service.impl.HumanInfoManagerProxy;
 import org.my.springcloud.producer.service.impl.MyCglib;
+import org.my.springcloud.producer.utils.SingleQueue;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cglib.core.DebuggingClassWriter;
 import org.springframework.cglib.proxy.Enhancer;
