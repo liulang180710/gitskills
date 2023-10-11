@@ -1,7 +1,12 @@
 package org.my.springcloud.base.utils;
 
+import org.apache.tomcat.util.ExceptionUtils;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -13,6 +18,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Server {
@@ -104,6 +112,35 @@ public class Server {
                 }
             });
         }
+    }
+    // 同步阻塞
+    public static void creatServerByThread() throws IOException {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        ServerSocket serverSocket = new ServerSocket(8080);
+        while(true) {
+            final Socket socket = serverSocket.accept();
+            executorService.execute(() -> handler(socket));
+        }
+    }
+
+    public static void handler(Socket socket) {
+        try{
+            byte[] bytes = new byte[1024];
+            InputStream inputStream =socket.getInputStream();
+            while (true) {
+                int read = inputStream.read(bytes);
+                if (read == -1) {
+                    System.out.println(new String(bytes,0, read));
+                }else {
+                    break;
+                }
+
+
+            }
+        }catch (Exception e) {
+
+        }
+
     }
 
     public static void split(ByteBuffer source) {

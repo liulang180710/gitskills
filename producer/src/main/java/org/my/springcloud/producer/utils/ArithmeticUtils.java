@@ -5,12 +5,14 @@ import org.my.springcloud.base.bean.TreeNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
@@ -197,6 +199,24 @@ public class ArithmeticUtils {
         }
         tail.next = (aPtr != null ? aPtr : bPtr);
         return head.next;
+    }
+
+    /**
+     * 合并K个顺序列表,分治合并
+     */
+    public ListNode mergeKLists2(ListNode[] lists) {
+        return merge(lists, 0, lists.length - 1);
+    }
+
+    public ListNode merge(ListNode[] lists, int start, int end) {
+        if (start > end) {
+            return null;
+        }
+        if (start == end) {
+            return lists[start];
+        }
+        int mid = (start + end) >> 1;
+        return mergeTwoLists(merge(lists, start, mid), merge(lists, mid + 1, end));
     }
 
     /**
@@ -611,23 +631,26 @@ public class ArithmeticUtils {
     }
 
     // 先序遍历非递归
-    public static void preOrderIteration(TreeNode head) {
+    public static List<Integer> preOrderIteration(TreeNode head) {
         if (head == null) {
-            return;
+            return null;
         }
+        List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
         stack.push(head);
         while (!stack.isEmpty()) {
             TreeNode node = stack.pop();
-            System.out.print(node.val + " ");
+            res.add(node.val);
             // 先将右子树压进栈中
             if (node.right != null) {
                 stack.push(node.right);
             }
+            // 再将左子树压入栈中
             if (node.left != null) {
                 stack.push(node.left);
             }
         }
+        return res;
     }
 
     // 中序遍历非递归实现
@@ -635,11 +658,12 @@ public class ArithmeticUtils {
         List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
             while (root != null || !stack.isEmpty()) {
-                // 一直向左遍历
+                // 一直向左遍历，将左节点全部先压入栈中
                 while (root != null) {
                     stack.push(root);
                     root = root.left;
                 }
+                // 然后再出栈，记录，然后遍历右节点
                 root = stack.pop();
                 res.add(root.val);
                 root = root.right;
@@ -648,12 +672,14 @@ public class ArithmeticUtils {
     }
 
     // 后序遍历非递归
-    public static void postOrderIteration(TreeNode head) {
+    public static List<Integer> postOrderIteration(TreeNode head) {
         if (head == null) {
-            return;
+            return null;
         }
+        List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack1 = new Stack<>();
         Stack<TreeNode> stack2 = new Stack<>();
+        // 先序遍历反过来，将左节点压入栈，再将右节点压入栈
         stack1.push(head);
         while (!stack1.isEmpty()) {
             TreeNode node = stack1.pop();
@@ -666,17 +692,20 @@ public class ArithmeticUtils {
             }
         }
         while (!stack2.isEmpty()) {
-            System.out.print(stack2.pop().val + " ");
+            res.add(stack2.pop().val);
         }
+        return res;
     }
 
 
     // 广度遍历算法（通用）
     public int BFS(TreeNode start, TreeNode target) {
         Queue<TreeNode> queue = new LinkedList();
+        // 设置访问标识
         Set<TreeNode> visited = new HashSet<>();
         // 将起点加入队列中
         queue.add(start);
+        // 设置为已访问
         visited.add(start);
         int step = 0; // 记录步数
         while(!queue.isEmpty()) {
@@ -698,6 +727,7 @@ public class ArithmeticUtils {
                 }
 
             }
+            // 增加步数
             step ++;
         }
         return step;
@@ -947,20 +977,18 @@ public class ArithmeticUtils {
      * @param root
      * @return
      */
-    public boolean isBST(TreeNode root) {
-        return isBST(root, null, null);
+    public boolean isValidBST2(TreeNode root) {
+        return isValidBST(root, Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
-    public boolean isBST(TreeNode node, Integer min, Integer max) {
+    public boolean isValidBST(TreeNode node, long lower, long upper) {
         if (node == null) {
             return true;
         }
-
-        if ((min != null && node.val <= min) || (max != null && node.val >= max)) {
+        if (node.val <= lower || node.val >= upper) {
             return false;
         }
-
-        return isBST(node.left, min, node.val) && isBST(node.right, node.val, max);
+        return isValidBST(node.left, lower, node.val) && isValidBST(node.right, node.val, upper);
     }
 
     /**
@@ -1104,14 +1132,13 @@ public class ArithmeticUtils {
             return true;
         }
         char[] word = s.toLowerCase().toCharArray();
-        StringBuilder stringBuilder = new StringBuilder();
-        int i,j=0;
+        int i,j;
         if (word.length % 2 != 0) {
             i = word.length/2-1;
-            j=word.length/2 + 1;
+            j = word.length/2 + 1;
         }else {
             i = word.length/2-1;
-            j=word.length/2;
+            j = word.length/2;
         }
         for(  ;i >=0 ;i--, j++) {
             if (word[i] != word[j]) {
@@ -1205,7 +1232,7 @@ public class ArithmeticUtils {
     }
 
 
-    // 107. 二叉树的层序遍历 II
+    // 107. 二叉树的层序遍历 II， 返回其节点值 自底向上的层序遍历
     public static List<List<Integer>> levelOrderBottom(TreeNode root) {
         List<List<Integer>> ret = new ArrayList<>();
         if (root == null) {
@@ -1478,7 +1505,7 @@ public class ArithmeticUtils {
         return longestStreak;
     }
 
-    // 判断是否是回文链表
+    // 234.判断是否是回文链表
     public boolean isPalindrome(ListNode head) {
         List<Integer> vals = new ArrayList<>();
 
@@ -1551,7 +1578,7 @@ public class ArithmeticUtils {
         return Math.max(L, R) + 1; // 返回该节点为根的子树的深度
     }
 
-
+    // 160. 相交链表 找到两个单链表相交的起始节点
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
         if (headA == null || headB == null) {
             return null;
@@ -1575,6 +1602,16 @@ public class ArithmeticUtils {
 
         }
         return result;
+    }
+
+    public ListNode getIntersectionNode2(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null) return null;
+        ListNode pA = headA, pB = headB;
+        while (pA != pB) {
+            pA = pA == null ? headB : pA.next;
+            pB = pB == null ? headA : pB.next;
+        }
+        return pA;
     }
 
     //43. 字符串相乘
@@ -1636,5 +1673,38 @@ public class ArithmeticUtils {
         }
         ans.reverse();
         return ans.toString();
+    }
+
+    // 前K个高频单词
+    public List<String> topKFrequent(String[] words, int k) {
+        // 1.先用哈希表统计单词出现的频率
+        Map<String, Integer> count = new HashMap();
+        for (String word : words) {
+            count.put(word, count.getOrDefault(word, 0) + 1);
+        }
+        // 2.构建小根堆 这里需要自己构建比较规则 此处为 lambda 写法 Java 的优先队列默认实现就是小根堆
+        PriorityQueue<String> minHeap = new PriorityQueue<>((s1, s2) -> {
+            if (count.get(s1).equals(count.get(s2))) {
+                return s2.compareTo(s1);
+            } else {
+                return count.get(s1) - count.get(s2);
+            }
+        });
+        // 3.依次向堆加入元素,构建k个元素的小顶堆
+        for (String s : count.keySet()) {
+            minHeap.offer(s);
+            // 当堆中元素个数大于 k 个的时候，需要弹出堆顶最小的元素。
+            if (minHeap.size() > k) {
+                minHeap.poll();
+            }
+        }
+        // 4.依次弹出堆中的 K 个元素，放入结果集合中。
+        List<String> res = new ArrayList<>(k);
+        while (minHeap.size() > 0) {
+            res.add(minHeap.poll());
+        }
+        // 5.注意最后需要反转元素的顺序。
+        Collections.reverse(res);
+        return res;
     }
 }

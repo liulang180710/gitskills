@@ -183,6 +183,33 @@ public class SortUtils {
 
 
 
+    // 数组中的第K个最大元素-选择排序
+    public int findKthLargest(int[] _nums, int k) {
+        int n = _nums.length;
+        return quickSelect(_nums, 0, n - 1, n - k);
+    }
+
+    int quickSelect(int[] nums, int left, int right, int k) {
+        if (left == right) return nums[k];
+        int x = nums[left], i = left - 1, j = right + 1;
+        while (i < j) {
+            do i++; while (nums[i] < x);
+            do j--; while (nums[j] > x);
+            if (i < j){
+                int tmp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = tmp;
+            }
+        }
+        if (j >= k) {
+            return quickSelect(nums, left, j, k);
+        } else {
+            return quickSelect(nums, j + 1, right, k);
+        }
+    }
+
+
+
     /******************************/
     //简单选择排序O(n^2)，每一次找到最小的，然后依次找后面的
     public static int[] selectSort(int[] array){
@@ -247,7 +274,7 @@ public class SortUtils {
             int temp=array[0];
             array[0]=array[j];
             array[j]=temp;
-            //交换了之后继续调整，找出最大的值
+            //交换了之后继续向下调整，找出最大的值
             heapAdjust(array, 0, j-1);
         }
         return array;
@@ -263,7 +290,7 @@ public class SortUtils {
             if(j+1<=length&&array[j]<array[j+1]){
                 ++j;
             }
-            //如果index小于其孩子节点中最小的一个，就跳出循环，不改变
+            //如果index大于其孩子节点中最大的一个，就跳出循环，不改变
             if(index>=array[j]){
                 break;
             }else{

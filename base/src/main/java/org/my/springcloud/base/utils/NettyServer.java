@@ -43,6 +43,8 @@ public class NettyServer {
     }
 
     private static void startServer(){
+        // boss只负责serversocketchannel上的accept事件
+        // worker 只负责socketchannel上的读写，默认为CPU的数量*2
         NioEventLoopGroup boss = new NioEventLoopGroup();
         NioEventLoopGroup worker = new NioEventLoopGroup();
         try{
