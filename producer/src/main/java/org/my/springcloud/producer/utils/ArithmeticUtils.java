@@ -1243,7 +1243,7 @@ public class ArithmeticUtils {
         while (!queue.isEmpty()) {
             List<Integer> level = new ArrayList<>();
             int currentLevelSize = queue.size();
-            for (int i = 1; i <= currentLevelSize; ++i) {
+            for (int i = 0; i < currentLevelSize; ++i) {
                 TreeNode node = queue.poll();
                 level.add(node.val);
                 if (node.left != null) {

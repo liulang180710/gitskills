@@ -38,4 +38,10 @@ public class HumanInfoController {
     }
 
 
+    @PostMapping(value = "create/human")
+    public ResultInfo createHuman(HumanInfo humanInfo) {
+        return humanInfoManager.createHuman(humanInfo);
+    }
+
+
 }

@@ -10,4 +10,11 @@
     <select id = "validPassword" resultType="HumanInfo" >
         select * from tc_human where human_name like CONCAT('%',#{userName},'%') and password = #{password}
     </select>
+
+    <insert id="createHuman" parameterType="HumanInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into tc_human (human_id, human_name, region_type, region_name, unit_id, unit_name, age,tel_mobile)
+        values
+               (#{humanID}, #{humanName}, #{regionType}, #{regionName}, #{unitID}, #{unitName}, #{age},
+                #{telMobile})
+    </insert>
 </mapper>

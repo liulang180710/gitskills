@@ -1,4 +1,5 @@
 package org.my.springcloud.producer.service;
+import org.my.springcloud.base.bean.HumanInfo;
 import org.my.springcloud.base.bean.ResultInfo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,4 +10,6 @@ public interface HumanInfoManager {
     ResultInfo findAllHuman();
 
     ResultInfo login(HttpServletRequest request, String userName, String password);
+
+    ResultInfo createHuman(HumanInfo humanInfo);
 }

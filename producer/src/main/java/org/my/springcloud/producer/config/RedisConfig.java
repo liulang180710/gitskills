@@ -2,6 +2,9 @@ package org.my.springcloud.producer.config;
 
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -55,7 +58,6 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.setHashValueSerializer(JSON_SERIALIZER);
         return template;
     }
-
 
 
 

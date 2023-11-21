@@ -97,7 +97,11 @@
             <artifactId>reflectasm</artifactId>
             <version>1.11.9</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <version>3.19.1</version>
+        </dependency>
     </dependencies>
 
     <build>

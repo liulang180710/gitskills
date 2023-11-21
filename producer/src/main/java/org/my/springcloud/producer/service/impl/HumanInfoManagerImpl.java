@@ -1,22 +1,30 @@
 package org.my.springcloud.producer.service.impl;
 
 import com.alibaba.druid.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.my.springcloud.base.bean.HumanInfo;
 import org.my.springcloud.base.bean.HumanSession;
 import org.my.springcloud.base.bean.ResultInfo;
 import org.my.springcloud.producer.dao.HumanInfoMapper;
 import org.my.springcloud.producer.service.HumanInfoManager;
 import org.my.springcloud.producer.utils.SessionUtils;
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class HumanInfoManagerImpl implements HumanInfoManager {
     @Autowired
     HumanInfoMapper humanInfoMapper;
+    @Autowired
+    private RedissonClient redissonClient;
 
 
     @Override
@@ -48,6 +56,24 @@ public class HumanInfoManagerImpl implements HumanInfoManager {
         SessionUtils.logon(request, humanSession);
         //如果验证成功
         return new ResultInfo(true, "登录成功！");
+    }
+
+    @Override
+    public ResultInfo createHuman(HumanInfo humanInfo) {
+        if (humanInfo.getHumanID() == 0) {
+            return new ResultInfo(false);
+        }
+        // 采用redisson
+        RLock rLock = redissonClient.getLock("egova:humanId:" + humanInfo.getHumanID());
+        try {
+            rLock.lock(30, TimeUnit.SECONDS);
+            humanInfoMapper.createHuman(humanInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            rLock.unlock();
+        }
+        return null;
     }
 
 }
