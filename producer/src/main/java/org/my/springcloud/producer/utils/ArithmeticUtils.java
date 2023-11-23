@@ -334,7 +334,7 @@ public class ArithmeticUtils {
         return x == revertedNumber || x == revertedNumber / 10;
     }
 
-    //三数之和
+    //三数之和等于0
     public List<List<Integer>> threeSum(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
         int n = nums.length;
@@ -579,17 +579,68 @@ public class ArithmeticUtils {
         return s.substring(begin, begin + maxLen);
     }
 
-    // 114. 二叉树展开为链表
+    // 二叉树展开为链表
     public void flatten(TreeNode root) {
-        List<Integer> res = new ArrayList<>();
-        preOrder(root, res);
-        if (res != null && res.size() > 0) {
-            root = new TreeNode();
-            root.val = res.get(0);
-            for (int i= 1; i< res.size(); i++) {
-                root.left = null;
-                root.right.val = res.get(i);
+        List<TreeNode> res = new ArrayList<>();
+        inorderFunc(root, res);
+        int size = res.size();
+        for (int i = 1; i < size; i++) {
+            TreeNode prev = res.get(i - 1);
+            TreeNode curr = res.get(i);
+            prev.left = null;
+            prev.right = curr;
+        }
+
+    }
+
+    public void inorderFunc(TreeNode root, List<TreeNode> res) {
+        if (root != null) {
+            res.add(root);
+            inorderFunc(root.left, res);
+            inorderFunc(root.right, res);
+        }
+    }
+
+    // 二叉树展开为链表2
+    public void flatten2(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        Deque<TreeNode> stack = new LinkedList<>();
+        stack.push(root);
+        TreeNode prev = null;
+        while (!stack.isEmpty()) {
+            TreeNode curr = stack.pop();
+            if (prev != null) {
+                prev.left = null;
+                prev.right = curr;
             }
+            TreeNode left = curr.left, right = curr.right;
+            if (right != null) {
+                stack.push(right);
+            }
+            if (left != null) {
+                stack.push(left);
+            }
+            prev = curr;
+        }
+    }
+
+    // 二叉树展开为链表3
+    public void flatten3(TreeNode root) {
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.left != null) {
+                TreeNode next = curr.left;
+                TreeNode predecessor = next;
+                while (predecessor.right != null) {
+                    predecessor = predecessor.right;
+                }
+                predecessor.right = curr.right;
+                curr.left = null;
+                curr.right = next;
+            }
+            curr = curr.right;
         }
     }
 
@@ -611,6 +662,30 @@ public class ArithmeticUtils {
         preOrder(root.right, res);
     }
 
+    // 先序遍历非递归
+    public static List<Integer> preOrderIteration(TreeNode head) {
+        if (head == null) {
+            return null;
+        }
+        List<Integer> res = new ArrayList<>();
+        Stack<TreeNode> stack = new Stack<>();
+        // 根节点压入栈
+        stack.push(head);
+        while (!stack.isEmpty()) {
+            TreeNode node = stack.pop();
+            res.add(node.val);
+            // 先将右子树压进栈中
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            // 再将左子树压入栈中
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+        }
+        return res;
+    }
+
 
     /**
      * 中序遍历
@@ -630,49 +705,46 @@ public class ArithmeticUtils {
         inorder(root.right, res);
     }
 
-    // 先序遍历非递归
-    public static List<Integer> preOrderIteration(TreeNode head) {
-        if (head == null) {
-            return null;
-        }
-        List<Integer> res = new ArrayList<>();
-        Stack<TreeNode> stack = new Stack<>();
-        stack.push(head);
-        while (!stack.isEmpty()) {
-            TreeNode node = stack.pop();
-            res.add(node.val);
-            // 先将右子树压进栈中
-            if (node.right != null) {
-                stack.push(node.right);
-            }
-            // 再将左子树压入栈中
-            if (node.left != null) {
-                stack.push(node.left);
-            }
-        }
-        return res;
-    }
 
     // 中序遍历非递归实现
     public List<Integer> inorderTraversal2(TreeNode root) {
         List<Integer> res = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
-            while (root != null || !stack.isEmpty()) {
-                // 一直向左遍历，将左节点全部先压入栈中
-                while (root != null) {
-                    stack.push(root);
-                    root = root.left;
-                }
-                // 然后再出栈，记录，然后遍历右节点
-                root = stack.pop();
-                res.add(root.val);
-                root = root.right;
+        while (root != null || !stack.isEmpty()) {
+            // 一直向左遍历，将左节点全部先压入栈中
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
             }
+            // 然后再出栈，记录，然后遍历右节点
+            root = stack.pop();
+            res.add(root.val);
+            root = root.right;
+        }
         return res;
     }
 
+    /**
+     * 后序遍历
+     */
+    public List<Integer> postOrderIteration(TreeNode root) {
+        List<Integer> res = new ArrayList<>();
+        postOrderOrder(root, res);
+        return res;
+    }
+
+    public void postOrderOrder(TreeNode root, List<Integer> res) {
+        if (root == null) {
+            return;
+        }
+
+        postOrderOrder(root.left, res);
+        postOrderOrder(root.right, res);
+        res.add(root.val);
+    }
+
     // 后序遍历非递归
-    public static List<Integer> postOrderIteration(TreeNode head) {
+    public static List<Integer> postOrderIteration2(TreeNode head) {
         if (head == null) {
             return null;
         }
